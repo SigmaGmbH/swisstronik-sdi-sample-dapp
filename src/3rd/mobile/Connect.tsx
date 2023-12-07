@@ -7,6 +7,8 @@ import MontainsShaped from '../../assets/montains-shaped'
 import InfoBlock from '../base/InfoBlock.tsx'
 import { getSigner } from '../../utils/services.ts'
 import MyContext from '../../store/context.tsx'
+import { createDid } from '../../utils/issuer.api.ts'
+import axios from 'axios'
 
 function renderError(message: string) {
   return (
@@ -61,12 +63,12 @@ function renderButton(btn: JSX.Element) {
 
 const ConnectService = () => {
   const [isConnected, setConnected] = useState<null | boolean>(null)
-  const { setUserAddress, setSigner } = useContext(MyContext)
+  const { userAddress, setUserAddress, setSigner, setDid } = useContext(MyContext)
   const [loading, setLoading] = useState(false)
+  const [didError, setDidError] = useState('')
 
-  if (!window['ethereum' as any]) {
-    return renderError('Metamask not found')
-  }
+  const navigate = useNavigate()
+
   const connectMetamask = async () => {
     setLoading(true)
     const signerRes = await getSigner()
@@ -85,10 +87,35 @@ const ConnectService = () => {
         setConnected(false)
       }
     }
-    console.log(`Connected - ${isConnected}, loading - ${loading}`)
+  }
+
+  // This is just a demo, with a demo issuer service
+  // In reality the issuer will probably provide Web SDK or iFrame to upload documents & wait for verification
+  // Swisstronik-hosted issuer is used just to simplify the Sample dApp
+  const issueActualDID = async () => {
+    setLoading(true)
+    setDidError('')
+    const didRes = await createDid({ user_address: userAddress as string }, {})
+    setLoading(false)
+    if (axios.isAxiosError(didRes)) {
+      setDidError(didRes.message)
+    } else if (didRes === undefined) {
+      setDidError('Unknown error occured')
+    } else {
+      setDid(didRes)
+      navigate('/auth-result')
+    }
+  }
+
+  if (!window['ethereum' as any]) {
+    return renderError('Metamask not found')
   }
   if (loading) {
     return renderLoading()
+  }
+
+  if (didError) {
+    return renderError(didError)
   }
 
   if (isConnected !== null) {
@@ -97,6 +124,7 @@ const ConnectService = () => {
         <button
           className={`${BaseStyles.actionBtnAccent} 
                 self-center border border-kyc-primary-dark px-4 py-3 !text-sm uppercase`}
+          onClick={issueActualDID}
         >
           Issue DID
         </button>,
