@@ -1,12 +1,13 @@
 import { createContext } from 'react'
 import { providers } from 'ethers'
+import { IDidApiModel } from '../utils/issuer.api.ts'
 
 //TODO: Add types for DID
 interface MyContextType {
   userAddress: string | null
   setUserAddress: (addr: string | null) => void
-  did: { [key: string]: any } | null
-  setDid: (data: object) => void
+  did: IDidApiModel | null
+  setDid: (data: IDidApiModel) => void
   signer: providers.JsonRpcSigner | null
   setSigner: (signer: providers.JsonRpcSigner) => void
 }

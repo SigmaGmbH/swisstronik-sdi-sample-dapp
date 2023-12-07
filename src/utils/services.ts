@@ -1,6 +1,9 @@
 import { ethers, providers, Wallet } from 'ethers'
 import { encryptDataField, decryptNodeResponse } from '@swisstronik/utils/src/tx'
+import { encodeTxDataWithVC } from '@swisstronik/utils/src/verifiableCredentials/coder'
+
 import { abi } from '../contract/abi'
+import { IDidApiModel } from './issuer.api.ts'
 
 export const DEMO_CONTRACT_ADDRESS = '0x2932Bd8a5e4b96E482344ceff065aFA34338aB97'
 export const DEMO_RPC_ENDPOINT = 'https://json-rpc.testnet.swisstronik.com'
@@ -50,6 +53,25 @@ const sendShieldedQuery = async (
   return await decryptNodeResponse(provider.connection.url, response, usedEncryptedKey)
 }
 
+const sendShieldedTransaction = async (
+  provider: providers.JsonRpcProvider,
+  signer: providers.JsonRpcSigner,
+  destination: string,
+  data: string,
+) => {
+  // Encrypt transaction data
+  const [encryptedData] = await encryptDataField(provider.connection.url, data)
+
+  // Construct and sign transaction with encrypted data
+  return await signer.sendTransaction({
+    from: await signer.getAddress(),
+    to: destination,
+    data: encryptedData,
+    gasPrice: 7,
+    gasLimit: 200000,
+  })
+}
+
 /**
  * Sends shielded query to smart contract to obtain amount of unique verified users
  * @param provider JSON-RPC provider to obtain data
@@ -82,4 +104,19 @@ export const requestIfUserIsVerified = async (
   const queryData = contract.interface.encodeFunctionData('isAuthorized', [userAddress])
   const res = await sendShieldedQuery(provider, destination, queryData)
   return contract.interface.decodeFunctionResult('isAuthorized', res)[0] as boolean
+}
+
+export const authorizeVerifiableCredential = async (
+  provider: providers.JsonRpcProvider,
+  signer: providers.JsonRpcSigner,
+  destination: string,
+  credential: IDidApiModel,
+) => {
+  // Encode tx.data
+  const txData = encodeTxDataWithVC(credential)
+  const authTx = await sendShieldedTransaction(provider, signer, destination, txData)
+  console.log(authTx)
+  const receipt = await authTx.wait()
+  console.log(receipt)
+  return receipt
 }
