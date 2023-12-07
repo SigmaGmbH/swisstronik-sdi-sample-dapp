@@ -11,7 +11,7 @@ export const getBase64 = (file: Blob) => {
   })
 }
 
-export const getSigner = async () => {
+export const getSigner: () => Promise<null | [string, providers.JsonRpcSigner]> = async () => {
   const { ethereum } = window as any
   const provider = new ethers.providers.Web3Provider(ethereum)
 

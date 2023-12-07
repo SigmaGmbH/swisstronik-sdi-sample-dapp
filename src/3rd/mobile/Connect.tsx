@@ -1,11 +1,12 @@
 import BaseStyles from '../../utils/styles.sets'
 import DappHeader from '../base/DapHeader'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import RaysPreloader from '../../componets/ui/Preloader/RaysPreloader'
 import { Link, useNavigate } from 'react-router-dom'
 import MontainsShaped from '../../assets/montains-shaped'
 import InfoBlock from '../base/InfoBlock.tsx'
 import { getSigner } from '../../utils/services.ts'
+import MyContext from '../../store/context.tsx'
 
 function renderError(message: string) {
   return (
@@ -60,8 +61,7 @@ function renderButton(btn: JSX.Element) {
 
 const ConnectService = () => {
   const [isConnected, setConnected] = useState<null | boolean>(null)
-  const [signer, setSigner] = useState()
-  const [userAddress, setUserAddress] = useState()
+  const { setUserAddress, setSigner } = useContext(MyContext)
   const [loading, setLoading] = useState(false)
 
   if (!window['ethereum' as any]) {
