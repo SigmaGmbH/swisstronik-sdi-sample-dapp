@@ -1,7 +1,7 @@
 import BaseStyles from '../../utils/styles.sets'
 import DappHeader from '../base/DapHeader'
 import { useContext, useState } from 'react'
-import RaysPreloader from '../../componets/ui/Preloader/RaysPreloader'
+import { RaysPreloader } from '../../components'
 import { Link, useNavigate } from 'react-router-dom'
 import MontainsShaped from '../../assets/montains-shaped'
 import InfoBlock from '../base/InfoBlock.tsx'

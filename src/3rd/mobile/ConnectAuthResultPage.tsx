@@ -1,7 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
 import MyContext from '../../store/context'
 import MontainsShaped from '../../assets/montains-shaped'
-import { IAuthResult } from '../../types'
+interface IAuthResult {
+  count: number
+  isVerified: boolean
+}
 
 import {
   requestVerifiedUsersCount,
@@ -13,22 +16,13 @@ import {
 import { providers } from 'ethers'
 import Icons from '../../swisstronik-components/src/components/core/icon-generator'
 import { useNavigate } from 'react-router-dom'
-import RaysPreloader from '../../componets/ui/Preloader/RaysPreloader'
+import { RaysPreloader } from '../../components'
 import BaseStyles from '../../utils/styles.sets'
 import { IDidApiModel } from '../../utils/issuer.api.ts'
 
 const ConnectAuthResultPage = () => {
   const navigate = useNavigate()
   const { userAddress, signer, did } = useContext(MyContext)
-
-  if (userAddress === null || signer === null || did === null) {
-    console.log(
-      `userAddress is null: ${userAddress === null}, signer is null: ${
-        signer === null
-      }, did is null: ${did === null}`,
-    )
-    navigate('/')
-  }
 
   const [verificationResult, setVerificationResult] = useState<IAuthResult>({
     count: 0,
@@ -54,6 +48,15 @@ const ConnectAuthResultPage = () => {
   useEffect(() => {
     if (userAddress) {
       fetchAuthState(userAddress)
+    } else {
+      if (userAddress === null || signer === null || did === null) {
+        console.log(
+          `Navigating to root because - userAddress is null: ${
+            userAddress === null
+          }, signer is null: ${signer === null}, did is null: ${did === null}`,
+        )
+        navigate('/')
+      }
     }
   }, [])
 

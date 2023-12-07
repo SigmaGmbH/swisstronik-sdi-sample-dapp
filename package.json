@@ -1,6 +1,6 @@
 {
   "name": "swisstronik-sdi-sample-dapps",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
+  "license": "Apache-2.0",
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@parcel/optimizer-cssnano": "^2.10.3",
