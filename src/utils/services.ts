@@ -1,5 +1,9 @@
 import { ethers, providers, Wallet } from 'ethers'
 import { encryptDataField, decryptNodeResponse } from '@swisstronik/utils/src/tx'
+import { abi } from '../contract/abi'
+
+export const DEMO_CONTRACT_ADDRESS = '0x2932Bd8a5e4b96E482344ceff065aFA34338aB97'
+export const DEMO_RPC_ENDPOINT = 'https://json-rpc.testnet.swisstronik.com'
 
 export const getBase64 = (file: Blob) => {
   return new Promise((resolve) => {
@@ -44,4 +48,38 @@ const sendShieldedQuery = async (
 
   // Decrypt call result
   return await decryptNodeResponse(provider.connection.url, response, usedEncryptedKey)
+}
+
+/**
+ * Sends shielded query to smart contract to obtain amount of unique verified users
+ * @param provider JSON-RPC provider to obtain data
+ * @param destination Smart contract address
+ * @returns Amount of unique verified users
+ */
+export const requestVerifiedUsersCount = async (
+  provider: providers.JsonRpcProvider,
+  destination: string,
+): Promise<number> => {
+  const contract = new ethers.Contract(destination, abi)
+  const queryData = contract.interface.encodeFunctionData('authorizedUsers', [])
+  const res = await sendShieldedQuery(provider, destination, queryData)
+  return contract.interface.decodeFunctionResult('authorizedUsers', res)[0].toNumber()
+}
+
+/**
+ * Sends shielded query to smart contract to check if user was verified or not
+ * @param provider JSON-RPC provider to obtain data
+ * @param destination Smart contract address
+ * @param userAddress User address to check
+ * @returns True if user was verified
+ */
+export const requestIfUserIsVerified = async (
+  provider: providers.JsonRpcProvider,
+  destination: string,
+  userAddress: string,
+): Promise<boolean> => {
+  const contract = new ethers.Contract(destination, abi)
+  const queryData = contract.interface.encodeFunctionData('isAuthorized', [userAddress])
+  const res = await sendShieldedQuery(provider, destination, queryData)
+  return contract.interface.decodeFunctionResult('isAuthorized', res)[0] as boolean
 }
