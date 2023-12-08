@@ -5,9 +5,13 @@ This is the example dApp (decentralized application) to showcase the usage of Sw
 ## Terminology
 
 DID - decentralized identity
+
 SDI - Swisstronik Digital Identity
+
 Issuer - organization / entity, which issues DID's for its users
+
 Verifier - entity which verifies the validity of issued DID's - in the case of SDI, it's a Smart Contract
+
 
 ## Background
 
