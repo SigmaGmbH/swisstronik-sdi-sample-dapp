@@ -4,7 +4,7 @@ This is the example dApp (decentralized application) to showcase the usage of Sw
 
 ## Terminology
 
-DID - decentralized identity
+DID - decentralized identifier
 
 SDI - Swisstronik Digital Identity
 
