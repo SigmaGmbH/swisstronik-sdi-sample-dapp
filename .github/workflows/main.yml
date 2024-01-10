@@ -39,7 +39,6 @@ jobs:
       - name: Deploy landing to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-            personal_token: ${{ secrets.GITHUB_TOKEN }}
             publish_branch: gh-pages
             publish_dir: dist
-            cname: sigmagmbh.github.io
+            cname: sdi-demo.swisstronik.com
