@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - master
+  workflow_call:
+    secrets:
+      envPAT:
+        required: true
 
 jobs:
   build:
@@ -37,6 +41,7 @@ jobs:
       - name: Deploy landing to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
+            personal_token: ${{ secrets.GITHUB_TOKEN }}
             publish_branch: gh-pages
             publish_dir: dist
-            cname: dev.pages.swisstronik.com
+            cname: sigmagmbh.github.io
