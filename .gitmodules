@@ -1,4 +1,0 @@
-[submodule "src/swisstronik-components"]
-	path = src/swisstronik-components
-	url = https://github.com/SigmaGmbH/swisstronik-js-components.git
-	branch = master
