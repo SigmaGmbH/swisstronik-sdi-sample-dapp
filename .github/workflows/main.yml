@@ -1,0 +1,42 @@
+name: CI build SDI
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Run
+    runs-on: ubuntu-latest
+    permissions: write-all
+    environment: production
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+
+      - name: 'Extend memory'
+        run: |
+          export NODE_OPTIONS="--max_old_space_size=16384"
+
+      - name: Set Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Run package install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Run build
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+
+      - name: Deploy landing to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+            publish_branch: gh-pages
+            publish_dir: dist
+            cname: dev.pages.swisstronik.com
