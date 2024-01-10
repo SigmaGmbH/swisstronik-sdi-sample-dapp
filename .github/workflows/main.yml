@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - master
-  workflow_call:
-    secrets:
-      envPAT:
-        required: true
 
 jobs:
   build:
@@ -19,7 +15,6 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v3
         with:
-            token: ${{ secrets.ACTION_SUBMODULE }}
             submodules: 'recursive'
 
       - name: 'Extend memory'
